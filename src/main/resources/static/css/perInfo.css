@@ -1,0 +1,56 @@
+body{
+    padding: 15px
+}
+.top{
+    margin: 0 auto;
+    width: 1290px;
+    height: 500px;
+    border-radius: 20px;
+    border:1px solid #bebdbd;
+}
+ul li{
+    font-size: 16px;
+    margin-top: 25px;
+    list-style: none;
+}
+
+h3{
+    text-align: center;
+}
+#divright,#divcenter,#divlift{
+    width: 429px;
+}
+.top .personInfo{
+    margin-top: 10px;
+    float: left;
+}
+.layui-btn1,.layui-btn2 {
+    height: 30px;
+    line-height: 30px;
+    font-size: 12px;
+    border: 1px solid transparent;
+    padding: 0 18px;
+    background-color: #009688;
+    color: #fff;
+    text-align: center;
+    border-radius: 2px;
+}
+.layui-btn1{
+    background-color: #009688;
+}
+.layui-btn1:hover{
+    background-color: #17a090;
+}
+.layui-input {
+    width: 200px;
+    padding-left: 10px;
+    border-color: #eee;
+    height: 36px;
+    line-height: 36px;
+    border-width: 1px;
+    border-style: solid;
+    color: rgba(0,0,0,.85);
+    border-radius: 2px;
+    outline: 0;
+    box-sizing: border-box;
+}

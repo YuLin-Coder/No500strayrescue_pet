@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:http="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<!-- th:fragment 定义需要引入的代码块，该div包含的内容即为引用的公共内容 -->
+<div th:fragment="myheader">
+    <div class="fly-header layui-bg-black">
+        <div class="layui-container">
+            <a class="fly-logo" href="/" style="font-size: 30px;color: white;left: -170px;">
+                动物救助中心系统
+            </a>
+            <ul class="layui-nav fly-nav layui-hide-xs">
+                <li class="layui-nav-item layui-this">
+                    <a href="toIndex"><i class="iconfont icon-iconmingxinganli"></i>主页面</a>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="toAnimalIndex" ><i class="iconfont icon-jiaoliu"></i>动物列表</a>
+                </li>
+                <li class="layui-nav-item">
+                    <a href="toBoard" ><i class="iconfont icon-ui"></i>帖子信息</a>
+                </li>
+
+            </ul>
+
+            <ul class="layui-nav fly-nav-user">
+
+                <!-- 未登入的状态 -->
+                <li class="layui-nav-item" th:if="${session.get('type')} eq null ">
+                    <a th:href="@{/outLogin}" >去登录</a>
+                </li>
+                <li class="layui-nav-item" th:if="${session.get('type')} eq null ">
+                    <a th:href="@{/toRegister}">注册</a>
+                </li>
+
+                <li class="layui-nav-item" th:if="${session.get('type')} eq '2' ">
+                    <a class="fly-nav-avatar" href="javascript:;">
+                        <cite class="layui-hide-xs" th:text='${session.get("username")}'></cite>
+                        <img th:src="${session.get('user').tx}">
+                    </a>
+
+                    <dl class="layui-nav-child">
+                        <dd><a th:href="@{/toUserIndex}" ><i class="layui-icon">&#xe620;</i>个人信息</a></dd>
+                        <hr style="margin: 5px 0;">
+                        <dd><a th:href="@{/outLogin}" style="text-align: center;">退出</a></dd>
+                    </dl>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+</div>
+</html>

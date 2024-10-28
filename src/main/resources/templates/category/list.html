@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css"  th:href="@{/css/studentHome.css}">
+    <link rel="stylesheet" type="text/css"  th:href="@{/bootstrap/css/bootstrap.min.css}">
+
+    <script type="text/javascript" th:src="@{/js/jquery-3.6.0.js}"></script>
+    <script type="text/javascript" th:src="@{/bootstrap/js/bootstrap.bundle.js}"></script>
+
+    <script th:src="@{/layui/layui.js}" charset="utf-8"></script>
+
+
+</head>
+<body>
+<h1 style="font-family: 隶书">动物救助中心系统，动物类别列表</h1>
+
+<div class="modal fade" id="myModal" aria-labelledby="myModallabel"
+     aria-hidden="true" tabindex="0"    style="left: -300px" >
+    <div class="modal-dialog">
+        <div class="modal-content"   style="width: 200%">
+            <div class="modal-header">
+
+                <h5 class="modal-title" id="myModallabel">动物类别新增</h5>
+                <button class="close" type="button" data-dismiss="modal"
+                        aria-hidden="true">&times;</button>
+            </div>
+            <form id="addForm" class="form-horizontal">
+                <span class="msg" style="color:red;"></span>
+                <div class="modal-body">
+                    <div class="row">
+                        <label class="control-label col-lg-2">类别名称：</label>
+                        <div class="col-lg-6">
+                            <input type="text" name="cname" id="cname" class="form-control">
+                        </div>
+                    </div>
+                   <br>
+                    <div class="row">
+                        <label class="control-label col-lg-2">备注：</label>
+                        <div class="col-lg-6">
+                            <input type="text" name="note"  class="form-control">
+                        </div>
+
+                    </div>
+                    <br>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-default" type="button" data-dismiss="modal">关闭</button>
+                    <a class="btn btn-success aaa" type="button" id="save" >提交</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="myModal2" aria-labelledby="myModallabel"
+     aria-hidden="true" tabindex="0"   style="left: -300px"  >
+    <div class="modal-dialog">
+        <div class="modal-content"   style="width: 200%">
+            <div class="modal-header">
+
+                <h5 class="modal-cname" >动物类别修改</h5>
+                <button class="close" type="button" data-dismiss="modal"
+                        aria-hidden="true">&times;</button>
+            </div>
+            <form id="updateForm" class="form-horizontal">
+                <span class="msg" style="color:red;"></span>
+                <div class="modal-body">
+                    <div class="row">
+                        <label class="control-label col-lg-2">类别名称：</label>
+                        <div class="col-lg-6">
+                            <input type="text" name="cname" id="cname1"  class="form-control">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <label class="control-label col-lg-2">备注：</label>
+                        <div class="col-lg-6">
+                            <input type="text" name="note" id="note"  class="form-control">
+                        </div>
+                    </div>
+
+                    <input type="hidden" id="id" name="id" >
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-default" type="button" data-dismiss="modal">关闭</button>
+                   <a class="btn btn-info " type="button" id="update1" >修改</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!--顶部搜索栏-->
+<div class="top" style="width: 100%;height: 80px" th:if="${session.get('type')} eq '1' ">
+    <form th:action="'/'+${url}">
+        <ul class="list">
+            <li>类别名称：<input name="cname"  class="layui-input" placeholder="请输入关键字" type="text" th:value='${key}'></li>
+            <li><button id="sub_select" type="submit" class="layui-btn1">查询</button></li>
+            <li><button id="addOption"  type="button" data-target="#myModal" data-toggle="modal" class="layui-btn1" >添加</button></li>
+            <span id="resultTip" style="display: none" th:text="${status}"></span>
+        </ul>
+    </form>
+</div>
+<br>
+
+<!--    表格-->
+
+<div>
+    <table class="tab" border="" style="border-collapse: collapse;color: #23262E;">
+        <tr style="height: 40px">
+                <th width="200px">类别名称</th>
+            <th width="300px">备注</th>
+            <th width="200px"  th:if="${session.get('type')} eq '1' ">操作</th>
+        </tr>
+
+        <tr style="height: 40px" class="tr" th:each="category:${pageInfo.list}">
+            <td th:text="${category.cname}" style="text-align: center"></td>
+            <td th:text="${category.note}" style="text-align: center"></td>
+
+            <td style="text-align: center"  th:if="${session.get('type')} eq '1' ">
+                <button th:onclick='set([[${category.id}]])'  data-target="#myModal2" data-toggle="modal" type="button" class="layui-btn1">修改</button>
+
+                <button th:if="${session.get('type')} eq '1' " id="btn02" th:onclick="del([[${category.id}]])" type="button" class="layui-btn2">删除</button>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div th:replace="common/footer :: myfooter"  ></div>
+
+<script>
+
+    $("#save").click(function() {
+        var cname = $("#cname").val();
+        if (cname=="") {
+            $("span.msg").text("分类名称不许为空！");
+            return false;
+        }
+        $.ajax({
+            cache : true,
+            type : "post",
+            url : "addCategory",
+            data : $("#addForm").serialize(),
+            async : false,
+            success : function(e) {
+                if (e == 'yes') {
+                    alert("新增成功！");
+                    document.location.reload();//当前页面
+                } else {
+                    alert("新增失败！");
+                }
+            }
+        })
+    });
+    $("#update1").click(function() {
+        var cname = $("#cname1").val();
+        if (cname=="") {
+            $("span.msg").text("分类名称不许为空！");
+            return false;
+        }
+        $.ajax({
+            cache : true,
+            type : "post",
+            url : "updateCategory",
+            data : $("#updateForm").serialize(),
+            async : false,
+            success : function(e) {
+                if (e == 'yes') {
+                    alert("修改成功！");
+                    document.location.reload();//当前页面
+                } else {
+                    alert("修改失败复！");
+                }
+            }
+        })
+    });
+
+    window.onload = function () {
+        var util = layui.util
+            ,laydate = layui.laydate
+            ,$ = layui.$
+            ,layer = layui.layer;
+        var resultTip = document.getElementById("resultTip").innerText
+        if (resultTip!=null&&resultTip!=""){
+            layer.msg(resultTip);
+        }
+    }
+    function set(id){
+        $.ajax({
+            cache : true,
+            type : "post",
+            url : "getCategoryById",
+            data : {"id":id},
+            async : false,
+            success : function(data) {
+                if (data) {
+                    $("#cname1").val(data.cname);
+                    $("#note").val(data.note);
+                    $("#id").val(data.id);
+                } else {
+                    alert("查询失败");
+                }
+            }
+        })
+    }
+
+    function del(id){
+        if(confirm("确定删除吗?")){
+            $.ajax({
+                cache:true,
+                url:"deleteCategory",
+                data:{"id": id},
+                type:"post",
+                async:false,
+                success:function (data) {
+                    console.log(data)
+                    if (data == 'yes') {
+                        alert("删除成功！");
+                        document.location.reload();//当前页面
+                    }else{
+                        alert("删除失败！");
+                    }
+                }
+            });
+        }
+    }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+
+
+<!DOCTYPE html>
+<html style="background-color: #e2e2e2;" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="keywords" content="{{ lay.base.keywords }}">
+    <meta name="description" content="{{ lay.base.description }}">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>动物救助中心系统</title>
+    <script th:src="@{/layui/layui.js}" charset="utf-8"></script>
+    <link rel="stylesheet" type="text/css"  th:href="@{/res/layui/css/layui.css}">
+    <link rel="stylesheet" type="text/css"  th:href="@{/res/css/global.css}">
+
+    <style>
+        .header{border-bottom: 1px solid #404553; border-right: 1px solid #404553;}
+    </style>
+</head>
+<body class="fly-full">
+
+<div th:replace="index/head :: myheader"  ></div>
+
+
+<div class="fly-case-header">
+    <p class="fly-case-year" style="margin-top: 40px">动物信息</p>
+</div>
+
+<div class="fly-main" style="overflow: hidden;">
+
+    <div class="fly-tab-border fly-case-tab">
+   <!-- <span>
+      <a href="" class="tab-this">2017年度</a>
+      <a href="">2016年度</a>
+    </span>-->
+    </div>
+    <div class="layui-tab layui-tab-brief">
+        <ul class="layui-tab-title">
+            <li class="layui-this"><a href="">最新动物</a></li>
+          <!--  <li><a href="">按点赞排行</a></li>-->
+        </ul>
+    </div>
+
+    <ul class="fly-case-list" >
+        <li data-id="123" th:each="data:${pageInfo.list}" style="height: 305px">
+            <a class="fly-case-img" th:href="@{/toAnimalDetail(aid=${data.id})}"  >
+                <img th:src="${data.photo}"  >
+                <cite class="layui-btn layui-btn-primary layui-btn-small">详情</cite>
+            </a>
+            <h2><a  th:href="@{/'toAnimalDetail'+${data.id}}" th:text="${data.name}" ></a></h2>
+            <p class="fly-case-desc" th:text="${data.note}"></p>
+            <div class="fly-case-info">
+                <a th:href="@{/'toAnimalDetail'+${data.id}}" class="fly-case-user" ><img th:src="${data.photo}" ></a>
+                <p class="layui-elip" style="font-size: 12px;" ><span style="color: #666;">动物分类：</span><span th:text="${data.category.cname}"></span> </p>
+                <a class="layui-btn layui-btn-primary fly-case-active" th:href="@{/toAnimalDetail(aid=${data.id})}" >详情</a>
+            </div>
+        </li>
+
+    </ul>
+
+    <div style="text-align: center;">
+        <div class="laypage-main">
+            <a th:href="'/'+${url}+'?pageNum='+${1}"  th:text="首页"></a>
+
+            <a href="#" th:if="${pageInfo.pageNum == pageInfo.getFirstPage()}" th:text="上一页"></a>
+            <a th:href="'/'+${url}+'?pageNum='+${pageInfo.prePage}" th:text="上一页" th:if="${pageInfo.pageNum > pageInfo.getFirstPage()}"></a>
+
+            <a    th:text="${i}" th:href="'/'+${url}+'?pageNum='+${i}" th:if="${pageInfo.pageNum != i}" th:each="i:${pageInfo.navigatepageNums}" ></a>
+            <a class="laypage-curr"   th:text="${i}" th:href="'/'+${url}+'?pageNum='+${i}" th:if="${pageInfo.pageNum == i}" th:each="i:${pageInfo.navigatepageNums}" ></a>
+
+            <a href="#" th:text="下一页" th:if="${pageInfo.pageNum == pageInfo.getLastPage()}">
+            </a>
+            <a th:href="'/'+${url}+'?pageNum='+${pageInfo.nextPage}" th:text="下一页" th:if="${pageInfo.pageNum < pageInfo.getLastPage()}">
+            </a>
+            <a th:href="'/'+${url}+'?pageNum='+${pageInfo.pages}" aria-label="Next"  th:text="尾页"></a>
+        </div>
+    </div>
+
+</div>
+
+<div th:replace="index/footer :: indexfooter"  ></div>
+
+<script src="../../res/layui/layui.js"></script>
+<script>
+    layui.cache.page = 'case';
+    layui.cache.user = {
+        username: '游客'
+        ,uid: -1
+        ,avatar: '../res/images/avatar/00.jpg'
+        ,experience: 83
+        ,sex: '男'
+    };
+    layui.config({
+        version: "3.0.0"
+        ,base: '../../res/mods/' //这里实际使用时，建议改成绝对路径
+    }).extend({
+        fly: 'index'
+    }).use('fly');
+</script>
+</body>
+</html>

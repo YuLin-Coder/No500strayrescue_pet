@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css"  th:href="@{/css/studentHome.css}">
+    <link rel="stylesheet" type="text/css"  th:href="@{/bootstrap/css/bootstrap.min.css}">
+
+    <!--    <link rel="stylesheet" th:href="@{/layui/css/layui.css}"  media="all">-->
+    <script type="text/javascript" th:src="@{/js/jquery-3.6.0.js}"></script>
+    <script type="text/javascript" th:src="@{/bootstrap/js/bootstrap.bundle.js}"></script>
+
+    <script th:src="@{/layui/layui.js}" charset="utf-8"></script>
+
+    <script th:src="@{/ueditor/ueditor.config.js}" charset="utf-8"></script>
+    <script th:src="@{/ueditor/ueditor.all.min.js}" charset="utf-8"></script>
+    <script th:src="@{/ueditor/lang/zh-cn/zh-cn.js}" charset="utf-8"></script>
+
+
+    <script type="text/javascript">
+        var ueditor  = UE.getEditor('container',{
+            initialFrameWidth:800,
+            //   initialFrameHeight:400,
+        });
+
+        var ueditor  = UE.getEditor('container2',{
+            initialFrameWidth:800,
+            //   initialFrameHeight:400,
+        });
+        UE.Editor.prototype._bkGetActionUrl = UE.Editor.prototype.getActionUrl;
+        UE.Editor.prototype.getActionUrl = function(action) {
+            // 如果触发了下面三个动作中，则进行文件上传操作
+            if (action == 'uploadimage' || action == 'uploadscrawl' || action == 'uploadimage') {
+                return '/api/ueditor/uploadImg';
+            } else {
+                return this._bkGetActionUrl.call(this, action);
+            }
+        }
+
+    </script>
+
+
+</head>
+<body>
+<h1 style="font-family: 隶书">动物救助中心系统，动物列表</h1>
+
+<div class="modal fade" id="myModal" aria-labelledby="myModallabel"
+     aria-hidden="true" tabindex="0"    style="left: -300px" >
+    <div class="modal-dialog" style="width: 500px;">
+        <div class="modal-content"   style="width: 200%">
+            <div class="modal-header">
+
+                <h5 class="modal-title" id="myModallabel">动物新增</h5>
+                <button class="close" type="button" data-dismiss="modal"
+                        aria-hidden="true">&times;</button>
+            </div>
+            <form id="addForm" class="form-horizontal">
+                <span class="msg" style="color:red;"></span>
+                <div class="modal-body">
+                    <div class="row">
+                        <label class="control-label col-lg-2">动物名称：</label>
+                        <div class="col-lg-3">
+                            <input type="text" name="name" id="name1" class="form-control">
+                        </div>
+                        <label class="control-label col-lg-2">动物类别：</label>
+                        <div class="col-lg-3">
+                            <select name="c_id"  class="form-control" >
+                                <option th:each="cate,userStat:${categoryList}" th:value="${cate.id}" th:text="${cate.cname}"></option>
+                            </select>
+                        </div>
+                    </div>
+                   <br>
+                    <div class="row">
+                        <label class="control-label col-lg-2">动物情况简介：</label>
+                        <div class="col-lg-5">
+                            <input type="text" name="note" id="note1"  class="form-control">
+                        </div>
+                    </div>
+                    <br>
+
+                    <div class="row">
+                        <label class="control-label col-lg-2">原主人：</label>
+                        <div class="col-lg-3">
+                            <input type="text" name="yzr" id="yzr1" class="form-control">
+                        </div>
+                        <label class="control-label col-lg-2">联系电话：</label>
+                        <div class="col-lg-3">
+                            <input type="text" name="phone" id="phone1" class="form-control">
+                        </div>
+                    </div>
+                    <br>
+                    <input type="hidden" name="photo" class="photo">
+                    <div class="row">
+                        <label class="control-label col-lg-2">图片:</label>
+                        <div class="layui-upload">
+                            <div class="layui-upload-list">
+                                <img class="layui-upload-img" style="width:200px;height:100px;margin-left: 4%" id="demo1">
+                                <button type="button" class="btn btn-primary" id="test1">+</button>
+                                <p id="demoText"></p>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <br>
+                    <div class="row">
+                        <label class="control-label col-lg-2">动物详情：</label>
+                        <div class="col-lg-5">
+                            <script id="container" name="detail" type="text/plain"></script>
+                        </div>
+                    </div>
+                    <br>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-default" type="button" data-dismiss="modal">关闭</button>
+                    <a class="btn btn-success aaa" type="button" id="save" >提交</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="myModal2" aria-labelledby="myModallabel"
+     aria-hidden="true" tabindex="0"   style="left: -300px"  >
+    <div class="modal-dialog">
+        <div class="modal-content"   style="width: 200%">
+            <div class="modal-header">
+
+                <h5 class="modal-title" >动物修改</h5>
+                <button class="close" type="button" data-dismiss="modal"
+                        aria-hidden="true">&times;</button>
+            </div>
+            <form id="updateForm" class="form-horizontal">
+                <span class="msg" style="color:red;"></span>
+                <div class="modal-body">
+                    <div class="row">
+                        <label class="control-label col-lg-2">动物名称：</label>
+                        <div class="col-lg-3">
+                            <input type="text" name="name" id="name"  class="form-control">
+                        </div>
+                        <label class="control-label col-lg-2">动物类别：</label>
+                        <div class="col-lg-3">
+                            <select name="c_id" id="c_id" class="form-control" >
+                                <option th:each="cate,userStat:${categoryList}" th:value="${cate.id}" th:text="${cate.cname}"></option>
+                            </select>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <label class="control-label col-lg-2">动物情况简介：</label>
+                        <div class="col-lg-5">
+                            <input type="text" name="note" id="note"  class="form-control">
+                        </div>
+                    </div>
+                    <br>
+
+                    <div class="row">
+                        <label class="control-label col-lg-2">原主人：</label>
+                        <div class="col-lg-3">
+                            <input type="text" name="yzr" id="yzr" class="form-control">
+                        </div>
+                        <label class="control-label col-lg-2">联系电话：</label>
+                        <div class="col-lg-3">
+                            <input type="text" name="phone" id="phone" class="form-control">
+                        </div>
+                    </div>
+
+                    <br>
+                    <input type="hidden" id="photo2" name="photo" class="photo">
+                    <div class="row">
+                        <label class="control-label col-lg-2">图片:</label>
+                        <div class="layui-upload">
+                            <div class="layui-upload-list">
+                                <img class="layui-upload-img" style="width:200px;height:100px;margin-left: 4%" id="demo2">
+                                <button type="button" class="btn btn-primary" id="test2">+</button>
+                                <p id="demoText2"></p>
+                            </div>
+
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <label class="control-label col-lg-2">动物详情：</label>
+                        <div class="col-lg-5">
+                            <script id="container2"  name="detail" type="text/plain">
+
+
+                            </script>
+                        </div>
+                    </div>
+                    <br>
+
+                    <input type="hidden" id="id" name="id" >
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-default" type="button" data-dismiss="modal">关闭</button>
+                   <a class="btn btn-info " type="button" id="update1" >修改</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!--顶部搜索栏-->
+<div class="top" style="width: 100%;height: 80px" th:if="${session.get('type')} eq '1' ">
+    <form th:action="'/'+${url}">
+        <ul class="list">
+            <li>动物名称：<input name="name"  class="layui-input" placeholder="请输入关键字" type="text" th:value='${name}'></li>
+            <li><button id="sub_select" type="submit" class="layui-btn1">查询</button></li>
+            <li><button id="addOption"  type="button" data-target="#myModal" data-toggle="modal" class="layui-btn1" >添加</button></li>
+            <span id="resultTip" style="display: none" th:text="${status}"></span>
+        </ul>
+    </form>
+</div>
+<br>
+
+<!--    表格-->
+
+
+
+
+<div>
+    <table class="tab" border="" style="border-collapse: collapse;color: #23262E;">
+        <tr style="height: 40px">
+                <th width="200px">动物名称</th>
+            <th width="300px">简介</th>
+            <th width="150px">动物类别</th>
+            <th width="150px">状态</th>
+            <th width="150px">原主人</th>
+            <th width="150px">联系电话</th>
+            <th width="150px">照片</th>
+            <th width="150px">发布日期</th>
+            <th width="200px"  th:if="${session.get('type')} eq '1' ">操作</th>
+        </tr>
+
+        <tr style="height: 40px" class="tr" th:each="user:${pageInfo.list}">
+            <td th:text="${user.name}" style="text-align: center"></td>
+            <td th:text="${user.note}" style="text-align: center"></td>
+            <td th:text="${user.category.cname}" style="text-align: center"></td>
+            <td th:if="${user.status == '1'}" style="text-align: center">领养</td>
+            <td th:if="${user.status == '2'}" style="text-align: center">无人领养</td>
+            <td th:text="${user.yzr}" style="text-align: center"></td>
+            <td th:text="${user.phone}" style="text-align: center"></td>
+            <td style="text-align: center">
+                <img th:src="${user.photo}"  width="100px" height="80px" alt="">
+            </td>
+            <td th:text="${user.create_date}" style="text-align: center"></td>
+
+            <td style="text-align: center"  th:if="${session.get('type')} eq '1' ">
+                <button th:onclick='set([[${user.id}]])'  data-target="#myModal2" data-toggle="modal" type="button" class="layui-btn1">修改</button>
+
+                <button th:if="${session.get('type')} eq '1' " id="btn02" th:onclick="del([[${user.id}]])" type="button" class="layui-btn2">删除</button>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div th:replace="common/footer :: myfooter"  ></div>
+
+<script>
+
+    layui.use([ 'form','jquery','layer','laydate','upload' ], function() {
+        var form = layui.form,
+            layer = layui.layer,
+            laydate = layui.laydate,
+            upload = layui.upload,
+            $= layui.jquery;
+        form.render();//这句一定要加，占坑
+
+        /*   laydate.render({
+          elem: '#schoolTime'
+        });
+          laydate.render({
+          elem: '#day'
+        });  */
+
+
+        var uploadInst = upload.render({
+            elem: '#test1'
+            ,url: 'upload'
+            ,accept:'images'
+            ,size:50000
+            ,before: function(obj){
+
+                obj.preview(function(index, file, result){
+
+                    $('#demo1').attr('src', result);
+                });
+            }
+            ,done: function(res){
+                //如果上传失败
+                if(res.code > 0){
+                    return layer.msg('上传失败');
+                }
+                //上传成功
+                var demoText = $('#demoText');
+                demoText.html('<span style="color: #4cae4c;">上传成功</span>');
+                console.log(res.data.src);
+                var fileupload = $(".photo");
+                fileupload.attr("value",res.data.src);
+                console.log(fileupload.attr("value"));
+            }
+            ,error: function(){
+                //演示失败状态，并实现重传
+                var demoText = $('#demoText');
+                demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                demoText.find('.demo-reload').on('click', function(){
+                    uploadInst.upload();
+                });
+            }
+        });
+
+
+        var uploadInst = upload.render({
+            elem: '#test2'
+            ,url: 'upload'
+            ,accept:'images'
+            ,size:50000
+            ,before: function(obj){
+
+                obj.preview(function(index, file, result){
+
+                    $('#demo2').attr('src', result);
+                });
+            }
+            ,done: function(res){
+                //如果上传失败
+                if(res.code > 0){
+                    return layer.msg('上传失败');
+                }
+                //上传成功
+                var demoText = $('#demoText');
+                demoText.html('<span style="color: #4cae4c;">上传成功</span>');
+                console.log(res.data.src);
+                $("#photo2").val(res.data.src);
+                // var fileupload = $(".img");
+                // fileupload.attr("value",res.data.src);
+                // console.log(fileupload.attr("value"));
+            }
+            ,error: function(){
+                //演示失败状态，并实现重传
+                var demoText = $('#demoText2');
+                demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                demoText.find('.demo-reload').on('click', function(){
+                    uploadInst.upload();
+                });
+            }
+        });
+    });
+</script>
+
+<script>
+
+    $("#save").click(function() {
+        var name1 = $("#name1").val();
+        if (name1=="") {
+            $("span.msg").text("动物名称不许为空！");
+            return false;
+        }
+        var note1 = $("#note1").val();
+        if (note1=="") {
+            $("span.msg").text("动物简介不许为空！");
+            return false;
+        }
+
+        var yzr1 = $("#yzr1").val();
+        if (yzr1=="") {
+            $("span.msg").text("原主任不许为空！");
+            return false;
+        }
+
+        var phone=$("#phone1").val();
+        if(!(/^1[34578]\d{9}$/.test(phone))){
+            $("span.msg").text("请填写正确的手机号码！");
+            return false;
+        }
+        $.ajax({
+            cache : true,
+            type : "post",
+            url : "addAnimal",
+            data : $("#addForm").serialize(),
+            async : false,
+            success : function(e) {
+                if (e == 'yes') {
+                    alert("新增成功！");
+                    document.location.reload();//当前页面
+                } else {
+                    alert("新增失败！");
+                }
+            }
+        })
+    });
+    $("#update1").click(function() {
+        var name1 = $("#name").val();
+        if (name1=="") {
+            $("span.msg").text("动物名称不许为空！");
+            return false;
+        }
+        var note1 = $("#note").val();
+        if (note1=="") {
+            $("span.msg").text("动物简介不许为空！");
+            return false;
+        }
+
+        var yzr1 = $("#yzr").val();
+        if (yzr1=="") {
+            $("span.msg").text("原主任不许为空！");
+            return false;
+        }
+
+        var phone=$("#phone").val();
+        if(!(/^1[34578]\d{9}$/.test(phone))){
+            $("span.msg").text("请填写正确的手机号码！");
+            return false;
+        }
+        $.ajax({
+            cache : true,
+            type : "post",
+            url : "updateAnimal",
+            data : $("#updateForm").serialize(),
+            async : false,
+            success : function(e) {
+                if (e == 'yes') {
+                    alert("修改成功！");
+                    document.location.reload();//当前页面
+                } else {
+                    alert("修改失败！");
+                }
+            }
+        })
+    });
+
+    window.onload = function () {
+        var util = layui.util
+            ,laydate = layui.laydate
+            ,$ = layui.$
+            ,layer = layui.layer;
+        var resultTip = document.getElementById("resultTip").innerText
+        if (resultTip!=null&&resultTip!=""){
+            layer.msg(resultTip);
+        }
+    }
+    function set(id){
+        $.ajax({
+            cache : true,
+            type : "post",
+            url : "getAnimalById",
+            data : {"id":id},
+            async : false,
+            success : function(data) {
+                if (data) {
+                    $("#c_id").val(data.c_id);
+                    $("#name").val(data.name);
+                    $("#photo2").val(data.photo);
+                    $("#note").val(data.note);
+                    $("#yzr").val(data.yzr);
+                    $("#phone").val(data.phone);
+                    //$("#container2").html(data.detail);
+                    $("#id").val(data.id);
+                    let ue = UE.getEditor('container2');
+                    ue.ready(function() {
+                        ue.setContent(data.detail, false);
+                    });
+
+                } else {
+                    alert("查询失败");
+                }
+            }
+        })
+    }
+
+    function del(id){
+        if(confirm("确定删除吗?")){
+            $.ajax({
+                cache:true,
+                url:"deleteAnimal",
+                data:{"id": id},
+                type:"post",
+                async:false,
+                success:function (data) {
+                    console.log(data)
+                    if (data == 'yes') {
+                        alert("删除成功！");
+                        document.location.reload();//当前页面
+                    }else{
+                        alert("删除失败！");
+                    }
+                }
+            });
+        }
+    }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css"  th:href="@{/css/studentHome.css}">
+    <link rel="stylesheet" type="text/css"  th:href="@{/bootstrap/css/bootstrap.min.css}">
+
+    <!--    <link rel="stylesheet" th:href="@{/layui/css/layui.css}"  media="all">-->
+    <script type="text/javascript" th:src="@{/js/jquery-3.6.0.js}"></script>
+    <script type="text/javascript" th:src="@{/bootstrap/js/bootstrap.bundle.js}"></script>
+
+    <script th:src="@{/layui/layui.js}" charset="utf-8"></script>
+
+    <script th:src="@{/ueditor/ueditor.config.js}" charset="utf-8"></script>
+    <script th:src="@{/ueditor/ueditor.all.min.js}" charset="utf-8"></script>
+    <script th:src="@{/ueditor/lang/zh-cn/zh-cn.js}" charset="utf-8"></script>
+
+
+    <script type="text/javascript">
+        var ueditor  = UE.getEditor('container',{
+            initialFrameWidth:800,
+            //   initialFrameHeight:400,
+        });
+        UE.Editor.prototype._bkGetActionUrl = UE.Editor.prototype.getActionUrl;
+        UE.Editor.prototype.getActionUrl = function(action) {
+            // 如果触发了下面三个动作中，则进行文件上传操作
+            if (action == 'uploadimage' || action == 'uploadscrawl' || action == 'uploadimage') {
+                return '/api/ueditor/uploadImg';
+            } else {
+                return this._bkGetActionUrl.call(this, action);
+            }
+        }
+
+    </script>
+
+
+</head>
+<body>
+<h1 style="font-family: 隶书">动物救助中心系统，公告列表</h1>
+
+<div class="modal fade" id="myModal" aria-labelledby="myModallabel"
+     aria-hidden="true" tabindex="0"    style="left: -300px" >
+    <div class="modal-dialog">
+        <div class="modal-content"   style="width: 200%">
+            <div class="modal-header">
+
+                <h5 class="modal-title" id="myModallabel">公告新增</h5>
+                <button class="close" type="button" data-dismiss="modal"
+                        aria-hidden="true">&times;</button>
+            </div>
+            <form id="addForm" class="form-horizontal">
+                <span class="msg" style="color:red;"></span>
+                <div class="modal-body">
+                    <div class="row">
+                        <label class="control-label col-lg-2">主题：</label>
+                        <div class="col-lg-3">
+                            <input type="text" name="title" id="title1" class="form-control">
+                        </div>
+                        <label class="control-label col-lg-2">发布人：</label>
+                        <div class="col-lg-3">
+                            <input type="text" name="editor" id="editor1"  class="form-control">
+                        </div>
+                    </div>
+                   <br>
+                    <div class="row">
+                        <label class="control-label col-lg-2">内容：</label>
+                        <div class="col-lg-5">
+                            <textarea  name="content" class="form-control" id="content1"></textarea>
+                        </div>
+                    </div>
+                    <br>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-default" type="button" data-dismiss="modal">关闭</button>
+                    <a class="btn btn-success aaa" type="button" id="save" >提交</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="myModal2" aria-labelledby="myModallabel"
+     aria-hidden="true" tabindex="0"   style="left: -300px"  >
+    <div class="modal-dialog">
+        <div class="modal-content"   style="width: 200%">
+            <div class="modal-header">
+
+                <h5 class="modal-title" >公告修改</h5>
+                <button class="close" type="button" data-dismiss="modal"
+                        aria-hidden="true">&times;</button>
+            </div>
+            <form id="updateForm" class="form-horizontal">
+                <span class="msg" style="color:red;"></span>
+                <div class="modal-body">
+                    <div class="row">
+                        <label class="control-label col-lg-2">主题：</label>
+                        <div class="col-lg-3">
+                            <input type="text" name="title" id="title"  class="form-control">
+                        </div>
+                        <label class="control-label col-lg-2">发布人：</label>
+                        <div class="col-lg-3">
+                            <input type="text" name="editor" id="editor"  class="form-control">
+                        </div>
+                    </div>
+
+                    <br>
+                    <div class="row">
+                        <label class="control-label col-lg-2">内容：</label>
+                        <div class="col-lg-5">
+                            <textarea id="content" name="content" class="form-control"></textarea>
+                        </div>
+                    </div>
+
+                    <br>
+
+                    <input type="hidden" id="id" name="id" >
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-default" type="button" data-dismiss="modal">关闭</button>
+                   <a class="btn btn-info " type="button" id="update1" >修改</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!--顶部搜索栏-->
+<div class="top" style="width: 100%;height: 80px" th:if="${session.get('type')} eq '1' ">
+    <form th:action="'/'+${url}">
+        <ul class="list">
+            <li>主题：<input name="title"  class="layui-input" placeholder="请输入关键字" type="text" th:value='${names}'></li>
+            <li><button id="sub_select" type="submit" class="layui-btn1">查询</button></li>
+            <li><button id="addOption"  type="button" data-target="#myModal" data-toggle="modal" class="layui-btn1" >添加</button></li>
+            <span id="resultTip" style="display: none" th:text="${status}"></span>
+        </ul>
+    </form>
+</div>
+<br>
+
+<!--    表格-->
+
+<div>
+    <table class="tab" border="" style="border-collapse: collapse;color: #23262E;">
+        <tr style="height: 40px">
+                <th width="400px">主题</th>
+            <th width="150px">发布人</th>
+            <th width="150px">发布时间</th>
+            <th width="200px"  th:if="${session.get('type')} eq '1' ">操作</th>
+        </tr>
+
+        <tr style="height: 40px" class="tr" th:each="user:${pageInfo.list}">
+            <td th:text="${user.title}" style="text-align: center"></td>
+            <td th:text="${user.editor}" style="text-align: center"></td>
+            <td th:text="${user.create_time}" style="text-align: center"></td>
+       
+
+            <td style="text-align: center"  th:if="${session.get('type')} eq '1' ">
+                <button th:onclick='set([[${user.id}]])'  data-target="#myModal2" data-toggle="modal" type="button" class="layui-btn1">修改</button>
+
+                <button th:if="${session.get('type')} eq '1' " id="btn02" th:onclick="del([[${user.id}]])" type="button" class="layui-btn2">删除</button>
+            </td>
+        </tr>
+    </table>
+</div>
+
+<div th:replace="common/footer :: myfooter"  ></div>
+
+<script>
+
+    $("#save").click(function() {
+        var title = $("#title1").val();
+        if (title=="") {
+            $("span.msg").text("公告标题不许为空！");
+            return false;
+        }
+        var editor1 = $("#editor1").val();
+        if (editor1=="") {
+            $("span.msg").text("发布者不许为空！");
+            return false;
+        }
+        var content1 = $("#content1").val();
+        if (content1=="") {
+            $("span.msg").text("公告内容不许为空！");
+            return false;
+        }
+        $.ajax({
+            cache : true,
+            type : "post",
+            url : "addNotify",
+            data : $("#addForm").serialize(),
+            async : false,
+            success : function(e) {
+                if (e == 'yes') {
+                    alert("新增成功！");
+                    document.location.reload();//当前页面
+                } else {
+                    alert("新增失败！");
+                }
+            }
+        })
+    });
+    $("#update1").click(function() {
+        var title = $("#title").val();
+        if (title=="") {
+            $("span.msg").text("公告标题不许为空！");
+            return false;
+        }
+        var editor1 = $("#editor").val();
+        if (editor1=="") {
+            $("span.msg").text("发布者不许为空！");
+            return false;
+        }
+        var content1 = $("#content").val();
+        if (content1=="") {
+            $("span.msg").text("公告内容不许为空！");
+            return false;
+        }
+        $.ajax({
+            cache : true,
+            type : "post",
+            url : "updateNotify",
+            data : $("#updateForm").serialize(),
+            async : false,
+            success : function(e) {
+                if (e == 'yes') {
+                    alert("修改成功！");
+                    document.location.reload();//当前页面
+                } else {
+                    alert("修改失败,手机号重复！");
+                }
+            }
+        })
+    });
+
+    window.onload = function () {
+        var util = layui.util
+            ,laydate = layui.laydate
+            ,$ = layui.$
+            ,layer = layui.layer;
+        var resultTip = document.getElementById("resultTip").innerText
+        if (resultTip!=null&&resultTip!=""){
+            layer.msg(resultTip);
+        }
+    }
+    function set(id){
+        $.ajax({
+            cache : true,
+            type : "post",
+            url : "getNotifyById",
+            data : {"id":id},
+            async : false,
+            success : function(data) {
+                if (data) {
+                    $("#title").val(data.title);
+                    $("#content").val(data.content);
+                    $("#editor").val(data.editor);
+                    $("#id").val(data.id);
+                } else {
+                    alert("查询失败");
+                }
+            }
+        })
+    }
+
+    function del(id){
+        if(confirm("确定删除吗?")){
+            $.ajax({
+                cache:true,
+                url:"deleteNotify",
+                data:{"id": id},
+                type:"post",
+                async:false,
+                success:function (data) {
+                    console.log(data)
+                    if (data == 'yes') {
+                        alert("删除成功！");
+                        document.location.reload();//当前页面
+                    }else{
+                        alert("删除失败！");
+                    }
+                }
+            });
+        }
+    }
+
+</script>
+</body>
+</html>

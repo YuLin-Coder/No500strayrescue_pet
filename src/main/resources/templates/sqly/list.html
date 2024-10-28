@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css"  th:href="@{/css/studentHome.css}">
+    <link rel="stylesheet" type="text/css"  th:href="@{/bootstrap/css/bootstrap.min.css}">
+
+    <!--    <link rel="stylesheet" th:href="@{/layui/css/layui.css}"  media="all">-->
+    <script type="text/javascript" th:src="@{/js/jquery-3.6.0.js}"></script>
+    <script type="text/javascript" th:src="@{/bootstrap/js/bootstrap.bundle.js}"></script>
+
+    <script th:src="@{/layui/layui.js}" charset="utf-8"></script>
+<!-- <script type="text/javascript" th:src="@{/js/student.js}"></script>-->
+
+
+</head>
+<body>
+<h1 style="font-family: 隶书">动物救助中心系统，收养申请列表</h1>
+
+<div class="modal fade" id="myModal2" aria-labelledby="myModallabel"
+     aria-hidden="true" tabindex="0"  style="left: -300px"  >
+    <div class="modal-dialog">
+        <div class="modal-content"   style="width: 200%">
+            <div class="modal-header">
+
+                <h5 class="modal-title" >收养申请修改</h5>
+                <button class="close" type="button" data-dismiss="modal"
+                        aria-hidden="true">&times;</button>
+            </div>
+            <form id="updateForm" class="form-horizontal">
+                <input type="hidden" name="id" id="id" class="form-control">
+
+                <div class="modal-body">
+                    <div class="row">
+                        <label class="control-label col-lg-2">申请说明：</label>
+                        <div class="col-lg-3">
+                            <input type="text" name="note" id="note" class="form-control">
+                        </div>
+
+                        <label class="control-label col-lg-2">联系电话：</label>
+                        <div class="col-lg-3">
+                            <input type="text" name="phone" id="phone"  class="form-control">
+                        </div>
+
+                    </div>
+                    <br>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-default" type="button" data-dismiss="modal">关闭</button>
+                   <a class="btn btn-info " type="button" id="update1" >修改</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!--顶部搜索栏-->
+<div th:if="${session.get('type')} eq '1' " class="top" style="width: 100%;height: 80px">
+    <form th:action="'/'+${url}">
+        <ul class="list">
+            <li>申请编号：<input name="sno" class="layui-input" placeholder="请输入关键字" type="text" th:value='${sno}'></li>
+            <li><button id="sub_select" type="submit" class="layui-btn1">查询</button></li>
+          <!--  <li><button id="addOption"  type="button" data-target="#myModal" data-toggle="modal" class="layui-btn1" >添加</button></li>-->
+            <span id="resultTip" style="display: none" th:text="${status}"></span>
+        </ul>
+    </form>
+</div>
+<br>
+
+<!--    表格-->
+
+<div>
+    <table class="tab" border="" style="border-collapse: collapse;color: #23262E;">
+        <tr style="height: 40px">
+            <th width="200px">申请编号</th>
+            <th width="200px">申请人</th>
+            <th width="300px">申请动物</th>
+            <th width="150px">状态</th>
+            <th width="150px">说明</th>
+            <th width="150px">联系电话</th>
+            <th width="150px">申请时间</th>
+            <th width="400px">操作</th>
+        </tr>
+
+        <tr style="height: 40px" class="tr" th:each="data:${pageInfo.list}">
+            <td th:text="${data.sno}" style="text-align: center"></td>
+            <td th:text="${data.user.realname}" style="text-align: center"></td>
+            <td th:text="${data.animal.name}" style="text-align: center"></td>
+            <td th:if="${data.state == '1'}" style="text-align: center">审核通过</td>
+            <td th:if="${data.state == '2'}" style="text-align: center">审核拒绝</td>
+            <td th:if="${data.state == '0'}" style="text-align: center">审核中</td>
+            <td th:text="${data.note}" style="text-align: center"></td>
+            <td th:text="${data.phone}" style="text-align: center"></td>
+            <td th:text="${data.create_time}" style="text-align: center"></td>
+            <td style="text-align: center">
+
+                <button th:if="${data.state == '0'}"  th:onclick="updateState([[${data.id}]],'1')" type="button" class="btn-primary">通过</button>
+                <button th:if="${data.state == '0'}"  th:onclick="updateState([[${data.id}]],'2')" type="button" class="btn-warning">拒绝</button>
+
+                <button th:onclick='set([[${data.id}]])'  data-target="#myModal2" data-toggle="modal" type="button" class="layui-btn1">修改</button>
+
+                <button th:if="${session.get('type')} eq '1' " id="btn02" th:onclick="del([[${data.id}]])" type="button" class="layui-btn2">删除</button>
+            </td>
+        </tr>
+    </table>
+</div>
+
+
+<div th:replace="common/footer :: myfooter"  ></div>
+
+
+<script>
+
+    $("#save").click(function() {
+        $.ajax({
+            cache : true,
+            type : "post",
+            url : "addSqly",
+            data : $("#addForm").serialize(),
+            async : false,
+            success : function(e) {
+                if (e == 'yes') {
+                    alert("新增成功！");
+                    document.location.reload();//当前页面
+                } else {
+                    alert("新增失败,手机号重复！");
+                }
+            }
+        })
+    });
+    $("#update1").click(function() {
+        $.ajax({
+            cache : true,
+            type : "post",
+            url : "updateSqly",
+            data : $("#updateForm").serialize(),
+            async : false,
+            success : function(e) {
+                if (e == 'yes') {
+                    alert("修改成功！");
+                    document.location.reload();//当前页面
+                } else {
+                    alert("修改失败,手机号重复！");
+                }
+            }
+        })
+    });
+
+    window.onload = function () {
+        var util = layui.util
+            ,laydate = layui.laydate
+            ,$ = layui.$
+            ,layer = layui.layer;
+        var resultTip = document.getElementById("resultTip").innerText
+        if (resultTip!=null&&resultTip!=""){
+            layer.msg(resultTip);
+        }
+    }
+
+    function set(id){
+        $.ajax({
+            cache : true,
+            type : "post",
+            url : "getSqlyById",
+            data : {"id":id},
+            async : false,
+            success : function(data) {
+                if (data) {
+
+
+                    $("#note").val(data.note);
+                    $("#phone").val(data.phone);
+                    $("#id").val(data.id);
+                } else {
+                    alert("查询失败");
+                }
+            }
+        })
+    }
+
+    function del(id){
+        if(confirm("确定删除吗?")){
+            $.ajax({
+                cache:true,
+                url:"deleteSqly",
+                data:{"id": id},
+                type:"post",
+                async:false,
+                success:function (data) {
+                    console.log(data)
+                    if (data == 'yes') {
+                        alert("删除成功！");
+                        document.location.reload();//当前页面
+                    }else{
+                        alert("删除失败！");
+                    }
+                }
+            });
+        }
+    }
+
+
+    function updateState(id,state){
+        if(confirm("确定审批这条数据吗?")){
+            $.ajax({
+                cache:true,
+                url:"updateSqlyState",
+                data:{"id": id,"state":state},
+                type:"post",
+                async:false,
+                success:function (data) {
+                    console.log(data)
+                    if (data == 'yes') {
+                        alert("操作成功！");
+                        document.location.reload();//当前页面
+                    }else{
+                        alert("操作失败！");
+                    }
+                }
+            });
+        }
+    }
+
+
+</script>
+</body>
+</html>

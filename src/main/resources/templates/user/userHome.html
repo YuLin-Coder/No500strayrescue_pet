@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css"  th:href="@{/css/studentHome.css}">
+    <link rel="stylesheet" type="text/css"  th:href="@{/bootstrap/css/bootstrap.min.css}">
+
+    <!--    <link rel="stylesheet" th:href="@{/layui/css/layui.css}"  media="all">-->
+    <script type="text/javascript" th:src="@{/js/jquery-3.6.0.js}"></script>
+    <script type="text/javascript" th:src="@{/bootstrap/js/bootstrap.bundle.js}"></script>
+
+    <script th:src="@{/layui/layui.js}" charset="utf-8"></script>
+<!-- <script type="text/javascript" th:src="@{/js/student.js}"></script>-->
+
+
+</head>
+<body>
+<h1 style="font-family: 隶书">动物救助中心系统，用户列表</h1>
+
+<div class="modal fade" id="myModal" aria-labelledby="myModallabel"
+     aria-hidden="true" tabindex="0"  style="left: -300px" >
+    <div class="modal-dialog">
+        <div class="modal-content"   style="width: 200%">
+            <div class="modal-header">
+
+                <h5 class="modal-title" id="myModallabel">用户新增</h5>
+                <button class="close" type="button" data-dismiss="modal"
+                        aria-hidden="true">&times;</button>
+            </div>
+            <form id="addForm" class="form-horizontal">
+                <div class="modal-body">
+                    <div class="row">
+                        <label class="control-label col-lg-2">姓名：</label>
+                        <div class="col-lg-3">
+                            <input type="text" name="realname" class="form-control">
+                        </div>
+
+                        <label class="control-label col-lg-2">用户名：</label>
+                        <div class="col-lg-3">
+                            <input type="text" name="nickname" class="form-control">
+                        </div>
+
+                    </div>
+                   <br>
+
+                    <div class="row">
+                        <label class="control-label col-lg-2">密码：</label>
+                        <div class="col-lg-3">
+                            <input type="password" name="pwd"  class="form-control">
+                        </div>
+                        <label class="control-label col-lg-2">性别：</label>
+                        <div class="col-lg-3">
+                            <select name="sex" class="form-control">
+                                    <option value="男">男</option>
+                                    <option value="女">女</option>
+                            </select>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <label class="control-label col-lg-2">手机号：</label>
+                        <div class="col-lg-3">
+                            <input type="text" name="phone"  class="form-control">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+
+                        <label class="control-label col-lg-2">地址：</label>
+                        <div class="col-lg-6">
+                            <input type="text" name="address"  class="form-control">
+                        </div>
+                    </div>
+                    <br>
+
+                    <input type="hidden" name="tx" class="tx">
+                    <div class="row">
+                        <label class="control-label col-lg-2">图片:</label>
+                        <div class="layui-upload">
+                            <div class="layui-upload-list">
+                                <img class="layui-upload-img" style="width:200px;height:100px;margin-left: 4%" id="demo1">
+                                <button type="button" class="btn btn-primary" id="test1">+</button>
+                                <p id="demoText"></p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-default" type="button" data-dismiss="modal">关闭</button>
+                    <a class="btn btn-success aaa" type="button" id="save" >提交</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="myModal2" aria-labelledby="myModallabel"
+     aria-hidden="true" tabindex="0"  style="left: -300px"  >
+    <div class="modal-dialog">
+        <div class="modal-content"   style="width: 200%">
+            <div class="modal-header">
+
+                <h5 class="modal-title" >用户修改</h5>
+                <button class="close" type="button" data-dismiss="modal"
+                        aria-hidden="true">&times;</button>
+            </div>
+            <form id="updateForm" class="form-horizontal">
+                <input type="hidden" name="id" id="id" class="form-control">
+
+                <div class="modal-body">
+                    <div class="row">
+                        <label class="control-label col-lg-2">姓名：</label>
+                        <div class="col-lg-3">
+                            <input type="text" name="realname" id="realname" class="form-control">
+                        </div>
+
+                        <label class="control-label col-lg-2">用户名：</label>
+                        <div class="col-lg-3">
+                            <input type="text" name="nickname" id="nickname"  class="form-control">
+                        </div>
+
+                    </div>
+                    <br>
+
+                    <div class="row">
+                        <label class="control-label col-lg-2">密码：</label>
+                        <div class="col-lg-3">
+                            <input type="password" name="pwd"  id="pwd" class="form-control">
+                        </div>
+                        <label class="control-label col-lg-2">性别：</label>
+                        <div class="col-lg-3">
+                            <select name="sex" class="form-control">
+                                <option value="男">男</option>
+                                <option value="女">女</option>
+                            </select>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <label class="control-label col-lg-2">手机号：</label>
+                        <div class="col-lg-3">
+                            <input type="text" name="phone"  id="phone" class="form-control">
+                        </div>
+                    </div>
+
+                    <br>
+                    <div class="row">
+
+                        <label class="control-label col-lg-2">地址：</label>
+                        <div class="col-lg-6">
+                            <input type="text" name="address" id="address"  class="form-control">
+                        </div>
+                    </div>
+                    <br>
+
+                    <input type="hidden" id="tx2" name="tx" class="tx">
+                    <div class="row">
+                        <label class="control-label col-lg-2">图片:</label>
+                        <div class="layui-upload">
+                            <div class="layui-upload-list">
+                                <img class="layui-upload-img" style="width:200px;height:100px;margin-left: 4%" id="demo2">
+                                <button type="button" class="btn btn-primary" id="test2">+</button>
+                                <p id="demoText2"></p>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="btn btn-default" type="button" data-dismiss="modal">关闭</button>
+                   <a class="btn btn-info " type="button" id="update1" >修改</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!--顶部搜索栏-->
+<div th:if="${session.get('type')} eq '1' " class="top" style="width: 100%;height: 80px">
+    <form th:action="'/'+${url}">
+        <ul class="list">
+            <li>姓名：<input name="realname" class="layui-input" placeholder="请输入关键字" type="text" th:value='${key}'></li>
+            <li><button id="sub_select" type="submit" class="layui-btn1">查询</button></li>
+            <li><button id="addOption"  type="button" data-target="#myModal" data-toggle="modal" class="layui-btn1" >添加</button></li>
+            <span id="resultTip" style="display: none" th:text="${status}"></span>
+        </ul>
+    </form>
+</div>
+<br>
+
+<!--    表格-->
+
+<div>
+    <table class="tab" border="" style="border-collapse: collapse;color: #23262E;">
+        <tr style="height: 40px">
+                <th width="150px">姓名</th>
+            <th width="150px">用户名</th>
+            <th width="150px">手机号</th>
+            <th width="150px">性别</th>
+            <th width="150px">地址</th>
+            <th width="150px">图片</th>
+            <th width="150px">注册时间</th>
+            <th width="200px">操作</th>
+        </tr>
+
+        <tr style="height: 40px" class="tr" th:each="user:${pageInfo.list}">
+            <td th:text="${user.realname}" style="text-align: center"></td>
+            <td th:text="${user.nickname}" style="text-align: center"></td>
+            <td th:text="${user.phone}" style="text-align: center"></td>
+            <td th:text="${user.sex}" style="text-align: center"></td>
+            <td th:text="${user.address}" style="text-align: center"></td>
+            <td style="text-align: center">
+                    <img th:src="${user.tx}"  width="100px" height="80px" alt="">
+            </td>
+            <td th:text="${user.registe_time}" style="text-align: center"></td>
+            <td style="text-align: center">
+                <button th:onclick='set([[${user.id}]])'  data-target="#myModal2" data-toggle="modal" type="button" class="layui-btn1">修改</button>
+
+                <button th:if="${session.get('type')} eq '1' " id="btn02" th:onclick="del([[${user.id}]])" type="button" class="layui-btn2">删除</button>
+            </td>
+        </tr>
+    </table>
+</div>
+
+
+<div th:replace="common/footer :: myfooter"  ></div>
+<script>
+
+    layui.use([ 'form','jquery','layer','laydate','upload' ], function() {
+        var form = layui.form,
+            layer = layui.layer,
+            laydate = layui.laydate,
+            upload = layui.upload,
+            $= layui.jquery;
+        form.render();//这句一定要加，占坑
+
+        /*   laydate.render({
+          elem: '#schoolTime'
+        });
+          laydate.render({
+          elem: '#day'
+        });  */
+
+
+        var uploadInst = upload.render({
+            elem: '#test1'
+            ,url: 'upload'
+            ,accept:'images'
+            ,size:50000
+            ,before: function(obj){
+
+                obj.preview(function(index, file, result){
+
+                    $('#demo1').attr('src', result);
+                });
+            }
+            ,done: function(res){
+                //如果上传失败
+                if(res.code > 0){
+                    return layer.msg('上传失败');
+                }
+                //上传成功
+                var demoText = $('#demoText');
+                demoText.html('<span style="color: #4cae4c;">上传成功</span>');
+                console.log(res.data.src);
+                var fileupload = $(".tx");
+                fileupload.attr("value",res.data.src);
+                console.log(fileupload.attr("value"));
+            }
+            ,error: function(){
+                //演示失败状态，并实现重传
+                var demoText = $('#demoText');
+                demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                demoText.find('.demo-reload').on('click', function(){
+                    uploadInst.upload();
+                });
+            }
+        });
+        
+        
+        var uploadInst = upload.render({
+            elem: '#test2'
+            ,url: 'upload'
+            ,accept:'images'
+            ,size:50000
+            ,before: function(obj){
+
+                obj.preview(function(index, file, result){
+
+                    $('#demo2').attr('src', result);
+                });
+            }
+            ,done: function(res){
+                //如果上传失败
+                if(res.code > 0){
+                    return layer.msg('上传失败');
+                }
+                //上传成功
+                var demoText = $('#demoText');
+                demoText.html('<span style="color: #4cae4c;">上传成功</span>');
+                console.log(res.data.src);
+                $("#tx2").val(res.data.src);
+               // var fileupload = $(".img");
+               // fileupload.attr("value",res.data.src);
+               // console.log(fileupload.attr("value"));
+            }
+            ,error: function(){
+                //演示失败状态，并实现重传
+                var demoText = $('#demoText2');
+                demoText.html('<span style="color: #FF5722;">上传失败</span> <a class="layui-btn layui-btn-xs demo-reload">重试</a>');
+                demoText.find('.demo-reload').on('click', function(){
+                    uploadInst.upload();
+                });
+            }
+        });
+    });
+</script>
+
+
+<script>
+
+    $("#save").click(function() {
+        $.ajax({
+            cache : true,
+            type : "post",
+            url : "addUser",
+            data : $("#addForm").serialize(),
+            async : false,
+            success : function(e) {
+                if (e == 'yes') {
+                    alert("新增成功！");
+                    document.location.reload();//当前页面
+                } else {
+                    alert("新增失败,手机号重复！");
+                }
+            }
+        })
+    });
+    $("#update1").click(function() {
+        $.ajax({
+            cache : true,
+            type : "post",
+            url : "updateUser",
+            data : $("#updateForm").serialize(),
+            async : false,
+            success : function(e) {
+                if (e == 'yes') {
+                    alert("修改成功！");
+                    document.location.reload();//当前页面
+                } else {
+                    alert("修改失败,手机号重复！");
+                }
+            }
+        })
+    });
+
+    window.onload = function () {
+        var util = layui.util
+            ,laydate = layui.laydate
+            ,$ = layui.$
+            ,layer = layui.layer;
+        var resultTip = document.getElementById("resultTip").innerText
+        if (resultTip!=null&&resultTip!=""){
+            layer.msg(resultTip);
+        }
+    }
+
+    function set(id){
+        $.ajax({
+            cache : true,
+            type : "post",
+            url : "getUserById",
+            data : {"id":id},
+            async : false,
+            success : function(data) {
+                if (data) {
+
+                    $("#realname").val(data.realname);
+                    $("#nickname").val(data.nickname);
+                    $("#phone").val(data.phone);
+                    $("#pwd").val(data.pwd);
+                    $("#sex").val(data.sex);
+                    $("#address").val(data.address);
+                    $("#tx2").val(data.tx);
+                    $("#id").val(data.id);
+                } else {
+                    alert("查询失败");
+                }
+            }
+        })
+    }
+
+    function del(id){
+        if(confirm("确定删除吗?")){
+            $.ajax({
+                cache:true,
+                url:"deleteUser",
+                data:{"id": id},
+                type:"post",
+                async:false,
+                success:function (data) {
+                    console.log(data)
+                    if (data == 'yes') {
+                        alert("删除成功！");
+                        document.location.reload();//当前页面
+                    }else{
+                        alert("删除失败！");
+                    }
+                }
+            });
+        }
+    }
+
+</script>
+</body>
+</html>

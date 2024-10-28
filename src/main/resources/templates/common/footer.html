@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:http="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+<!-- th:fragment 定义需要引入的代码块，该div包含的内容即为引用的公共内容 -->
+<div th:fragment="myfooter">
+    <div class="footer">
+
+        <div class="box-tools"  style="margin-top: 20px">
+            <ul class="pagination">
+                <li>
+                    <a th:href="'/'+${url}+'?pageNum='+${1}" aria-label="Previous">
+                        <div th:text="首页"></div>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" th:if="${pageInfo.pageNum == pageInfo.getFirstPage()}">
+                        <div style="border: 1px solid #d7d7d7;color: #d7d7d7;cursor: no-drop" th:text="上一页"></div>
+                    </a>
+                    <a th:href="'/'+${url}+'?pageNum='+${pageInfo.prePage}" th:if="${pageInfo.pageNum > pageInfo.getFirstPage()}">
+                        <div th:text="上一页"></div>
+                    </a>
+                </li>
+
+                <li th:each="i:${pageInfo.navigatepageNums}">
+                    <a th:href="'/'+${url}+'?pageNum='+${i}" th:if="${pageInfo.pageNum == i}">
+                        <div style="width: 32px;background-color: #009688;color: #FFFFFF;border-radius: 3px;" th:text="${i}"></div>
+                    </a>
+                    <a th:href="'/'+${url}+'?pageNum='+${i}" th:if="${pageInfo.pageNum != i}">
+                        <div  style="width: 32px;" th:text="${i}"></div>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="#" th:if="${pageInfo.pageNum == pageInfo.getLastPage()}">
+                        <div style="border: 1px solid #d7d7d7;color: #d7d7d7;cursor: no-drop" th:text="下一页"></div>
+                    </a>
+                    <a th:href="'/'+${url}+'?pageNum='+${pageInfo.nextPage}" th:if="${pageInfo.pageNum < pageInfo.getLastPage()}">
+                        <div th:text="下一页"></div>
+                    </a>
+                </li>
+                <li>
+                    <a th:href="'/'+${url}+'?pageNum='+${pageInfo.pages}" aria-label="Next"><div th:text="尾页"></div></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>修改密码</title>
+    <link rel="stylesheet" type="text/css"  th:href="@{/css/bootstrap.css}">
+    <link rel="stylesheet" type="text/css"  th:href="@{/css/back.css}">
+    <link rel="stylesheet" type="text/css"  th:href="@{/css/bootstrap-theme.css}">
+    <script type="text/javascript" th:src="@{/js/jquery-3.6.0.js}"></script>
+    <script type="text/javascript" th:src="@{/js/setpwd.js}"></script>
+
+</head>
+<body>
+<div id="magicalDragScene" class="mc-root mc-ui-absolute-pane">
+    <h1 style="margin-left: 60%;margin-top: 8%;font-family: 隶书;font-size: 60px;color: white" th:text="#{set.title}"></h1>
+    <br>
+    <div id="tmd" style="width: 25%;height: 275px;">
+        <form th:action="@{/setPwd}" method="post" style="margin: 0 auto;width: 80%; height: 275px;" onsubmit="return regCheck()">
+            <h1 class="h3 mb-3 font-weight-normal" style="color:white;font-family: 隶书;text-align: center" th:text="#{set.tip}"></h1>
+            <input id="password1" name="password1" class="layui-input"  style="margin-top: 5px" type="password" onblur="onbluetip();replace(this)" th:placeholder="#{set.pwd1}"/>
+            <input id="password2" name="password2" class="layui-input"  style="margin-top: 5px" type="password" onblur="onbluetip();replace(this)" th:placeholder="#{set.pwd2}"/>
+            <div class="form-check form-check-inline"></div>
+            <p class="mt-5 mb-3 text-muted text-sm-right" style="margin-top: 10px">
+                <a class="text-info" th:href="@{/toLogin}" draggable="false" style="color: #43a047" th:text="#{set.tolog}"></a>
+                <span id="statusTip" style="color: #43a047;font-size: 15px;margin-left: 40%" th:text="${status}"></span>
+            </p>
+            <button class="layui-btn1" style="width: 300px;height: 40px;font-size: 16px;margin-top: 10px;color: white" type="submit">[[#{set.yes}]]</button>
+        </form>
+    </div>
+    <br>
+    <a style="color: white;margin-left: 75%" th:href="@{/setpwd.html(language='zh_CN')}">中文</a>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a style="color: white" th:href="@{/setpwd.html(language='en_US')}">English</a>
+</div>
+</body>
+</html>

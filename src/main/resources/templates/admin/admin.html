@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css"  th:href="@{/css/studentHome.css}">
+    <link rel="stylesheet" type="text/css"  th:href="@{/bootstrap/css/bootstrap.min.css}">
+
+    <!--    <link rel="stylesheet" th:href="@{/layui/css/layui.css}"  media="all">-->
+    <script type="text/javascript" th:src="@{/js/jquery-3.6.0.js}"></script>
+    <script type="text/javascript" th:src="@{/bootstrap/js/bootstrap.bundle.js}"></script>
+
+    <script th:src="@{/layui/layui.js}" charset="utf-8"></script>
+
+    <script th:src="@{/ueditor/ueditor.config.js}" charset="utf-8"></script>
+    <script th:src="@{/ueditor/ueditor.all.min.js}" charset="utf-8"></script>
+    <script th:src="@{/ueditor/lang/zh-cn/zh-cn.js}" charset="utf-8"></script>
+
+</head>
+<body>
+<h1 style="font-family: 隶书">动物救助中心系统，修改个人信息</h1>
+
+<form class="form-horizontal" id="addForm" role="form">
+    <span class="msg" style="color:red;"></span>
+    <div class="form-group">
+        <label for="password" class="col-sm-2 control-label">旧密码</label>
+        <div class="col-sm-10">
+            <input type="password" class="form-control" id="password" name="password" placeholder="请输入旧密码">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="newPass" class="col-sm-2 control-label">新密码</label>
+        <div class="col-sm-10">
+            <input type="password" class="form-control" id="newPass" name="newPass"  placeholder="请输入新密码">
+        </div>
+    </div>
+
+
+    <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+            <button type="button" id="save" class="btn btn-info">修改</button>
+            <a type="button" class="btn btn-primary" href="toUpdateAdmin">重置</a>
+        </div>
+
+    </div>
+</form>
+<script>
+
+    $("#save").click(function() {
+        var password = $("#password").val();
+        if (password=="") {
+            $("span.msg").text("旧密码不许为空！");
+            return false;
+        }
+        var newPass = $("#newPass").val();
+        if (newPass=="") {
+            $("span.msg").text("新密码不许为空！");
+            return false;
+        }
+        $.ajax({
+            cache : true,
+            type : "post",
+            url : "updateAdmin",
+            data : $("#addForm").serialize(),
+            async : false,
+            success : function(e) {
+                if (e == 'yes') {
+                    alert("修改成功！");
+                    //document.location.reload();//当前页面
+                    window.parent.location.href = "outLogin";
+                } else {
+                    alert("修改失败！");
+                }
+            }
+        })
+    });
+
+</script>
+</body>
+</html>

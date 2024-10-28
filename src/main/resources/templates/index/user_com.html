@@ -1,0 +1,131 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>用户中心</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="keywords" content="fly,layui,前端社区">
+    <meta name="description" content="Fly社区是模块化前端UI框架Layui的官网社区，致力于为web开发提供强劲动力">
+    <link rel="stylesheet" type="text/css"  th:href="@{/res/layui/css/layui.css}">
+    <link rel="stylesheet" type="text/css"  th:href="@{/res/css/global.css}">
+</head>
+<body>
+
+<div th:replace="index/head :: myheader"  ></div>
+
+<div class="layui-container fly-marginTop fly-user-main">
+    <ul class="layui-nav layui-nav-tree layui-inline" lay-filter="user">
+        <li class="layui-nav-item ">
+            <a th:href="@{/toUserIndex}" >
+                <i class="layui-icon">&#xe609;</i>
+                我的帖子
+            </a>
+        </li>
+        <li class="layui-nav-item ">
+            <a th:href="@{/toMyInfo}" >
+                <i class="layui-icon">&#xe612;</i>
+                个人信息
+            </a>
+        </li>
+        <li class="layui-nav-item layui-this">
+            <a th:href="@{/toUserComments}" >
+                <i class="layui-icon">&#xe620;</i>
+                我的评论
+            </a>
+        </li>
+        <li class="layui-nav-item">
+            <a th:href="@{/myApply}" >
+                <i class="layui-icon">&#xe611;</i>
+                我的申请
+            </a>
+        </li>
+    </ul>
+
+    <div class="site-tree-mobile layui-hide">
+        <i class="layui-icon">&#xe602;</i>
+    </div>
+    <div class="site-mobile-shade"></div>
+
+    <div class="site-tree-mobile layui-hide">
+        <i class="layui-icon">&#xe602;</i>
+    </div>
+    <div class="site-mobile-shade"></div>
+
+
+    <div class="fly-panel fly-panel-user" pad20>
+        <!--
+        <div class="fly-msg" style="margin-top: 15px;">
+          您的邮箱尚未验证，这比较影响您的帐号安全，<a href="activate.html">立即去激活？</a>
+        </div>
+        -->
+        <div class="layui-tab layui-tab-brief" lay-filter="user">
+            <ul class="layui-tab-title" id="LAY_mine">
+                <li data-type="mine-jie" lay-id="index" class="layui-this">我发的帖（<span th:text="${counts}"></span>）</li>
+            </ul>
+            <div class="layui-tab-content" style="padding: 20px 0;">
+                <div class="layui-tab-item layui-show">
+                    <ul class="mine-view jie-row">
+                        <li  th:each="data:${commentsList}">
+                            <a class="jie-title"  th:text="${data.detail}" > </a>
+                            <i th:text="${data.create_time}"></i>
+                            <em> <a class="layui-btn layui-btn-danger layui-btn-sm" type="button" th:onclick="del([[${data.id}]])">删除</a></em>
+
+                        </li>
+                    </ul>
+                    <div id="LAY_page"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="index/footer :: indexfooter"  ></div>
+
+
+<script src="../../res/layui/layui.js"></script>
+<script type="text/javascript" th:src="@{/js/jquery-3.6.0.js}"></script>
+
+
+<script>
+    function del(id){
+        if(confirm("确定删除吗?")){
+            $.ajax({
+                cache:true,
+                url:"deleteComments",
+                data:{"id": id},
+                type:"post",
+                async:false,
+                success:function (data) {
+                    console.log(data)
+                    if (data == 'yes') {
+                        alert("删除成功！");
+                        document.location.reload();//当前页面
+                    }else{
+                        alert("删除失败！");
+                    }
+                }
+            });
+        }
+
+    }
+</script>
+<script>
+    layui.cache.page = 'user';
+    layui.cache.user = {
+        username: '游客'
+        ,uid: -1
+        ,avatar: '../../res/images/avatar/00.jpg'
+        ,experience: 83
+        ,sex: '男'
+    };
+    layui.config({
+        version: "3.0.0"
+        ,base: '../../res/mods/'
+    }).extend({
+        fly: 'index'
+    }).use('fly');
+</script>
+
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+    <link rel="icon" th:href="@{/public/favicon.ico}" type="image/x-icon"/>
+    <link rel="bookmark" th:href="@{/public/favicon.ico}" type="image/x-icon"/>
+    <link rel="stylesheet" type="text/css"  th:href="@{/css/bootstrap.css}">
+    <link rel="stylesheet" type="text/css"  th:href="@{/css/back.css}">
+    <link rel="stylesheet" type="text/css"  th:href="@{/css/bootstrap-theme.css}">
+    <script type="text/javascript" th:src="@{/js/jquery-3.6.0.js}"></script>
+    <script type="text/javascript" th:src="@{/js/login.js}"></script>
+    <script>
+        $(function() {
+            //防止页面后退
+            history.pushState(null, null, document.URL);
+            window.addEventListener('popstate', function () {
+                history.pushState(null, null, document.URL);
+            });
+        })
+    </script>
+</head>
+<body onload="loadTopWindow()">
+<div id="magicalDragScene" class="mc-root mc-ui-absolute-pane">
+    <h1 style="margin-left: 56%;margin-top: 8%;font-family: 隶书;font-size: 60px;color: white" >动物救助中心系统</h1>
+    <br>
+    <div id="tmd" style="width: 25%;height: 300px;">
+        <form style="margin: 0 auto;width: 80%;height: 300px; line-height: 30px;" th:action="@{/loginUser}" method="post" onsubmit="return regCheck()">
+            <h1 class="h3 mb-3 font-weight-normal" style="color:white;font-family: 隶书;text-align: center;" >登录</h1>
+            <input id="username" name="username" class="layui-input" type="text"  th:placeholder="请填写手机号或者用户名"/>
+
+            <input id="password" name="password" class="layui-input" style="margin-top: 5px" type="password" th:placeholder="请填写用户密码" origin-type="password"/>
+
+
+         <!--   <select name="type" class="form-control">
+                <option value="1" selected>管理员</option>
+                <option value="2">用户</option>
+            </select>-->
+            <br>
+            <input  name="type" value="1" style="margin-top: 5px" type="radio" checked/>管理员
+            <input  name="type" value="2" style="margin-top: 5px" type="radio" />救助者
+
+            <!--   <input name="remember" type="checkbox" style="margin-top: 15px;">&nbsp;<span style="color: #43a047;" ></span>-->
+         <span id="statusTip" style="color: #d62727;font-size: 15px;margin-left: 40%" th:text="${status}"></span>
+            <br>
+          <!--  <div class="form-check form-check-inline"></div>-->
+
+            <!--<p class="mt-5 mb-3 text-muted text-sm-right" style="margin-top: 10px"><span >还没有账号,</span>
+                <a class="text-info" th:href="@{/toReg}" draggable="false" style="color: #43a047" >求助者注册</a>
+                <a class="text-info" th:href="@{/toReg2}" style="color: #00a1d6;margin-left: 2px" >救援者注册</a>
+            </p>-->
+            <button class="layui-btn1" style="width: 300px;height: 40px;font-size: 16px;color: white" type="submit">登录</button>
+
+            <a th:href="@{/toRegister}">注册</a>
+        </form>
+    </div>
+    <br>
+ <!--   <a style="color: white;margin-left: 75%" th:href="@{/login.html(language='zh_CN')}">中文</a>&nbsp;&nbsp;&nbsp;&nbsp;
+    <a style="color: white" th:href="@{/login.html(language='en_US')}">English</a>-->
+
+
+</div>
+
+</body>
+</html>
